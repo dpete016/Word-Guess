@@ -1,29 +1,43 @@
+var Letter = require("./Letter");
 
-var letter = require("./Letter.js");
+function Word(word) {
 
-function(word) {
-
-    this.objArray = [];
-
-    for (var i = 0; i < answer.length; i++){
-        var letter = new letter(answer[i]);
-        this.objArray.push(letter)
-    }
-
-    this.log = function() {
-        answerLog = "";
-        for (var i=0; i < answer.length; i++){
-            answerLog += this.objArray[i] + " ";                        
-        }
-        console.log(answerLog + "\n");
-    }
-
-    this.userGuess = function(input) {
-        for (var i=0; i < this.objArray.length; i++){
-            this.objArray[i].guess(input);
-        }
-
-    }
+  this.letters = word.split("").map(function(char) {
+    return new Letter(char);
+  });
 }
 
-module.exports = word;
+
+
+
+Word.prototype.getSolution = function() {
+  return this.letters.map(function(letter) { 
+    return letter.getSolution(); 
+  }).join(""); 
+};
+
+
+Word.prototype.toString = function() {
+  return this.letters.join(" "); 
+};
+
+Word.prototype.guessLetter = function(char) {
+  var foundLetter = false;
+  this.letters.forEach(function(letter) {
+    if (letter.guess(char)) {
+      foundLetter = true;
+    }
+  });
+
+  console.log("\n" + this + "\n");
+
+  return foundLetter;
+};
+
+Word.prototype.guessedCorrectly = function() {
+  return this.letters.every(function(letter) {
+    return letter.visible;
+  });
+};
+
+module.exports = Word;
